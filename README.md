@@ -1,6 +1,6 @@
 # Cartier
 
-TODO: Write a gem description
+    Cartier is a gem used to simplify some common GPS type calcuations from a current project I've been working on.
 
 ## Installation
 
@@ -18,7 +18,10 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+    After installation one will need to create at minimum two instances of the Cartier::GPSLocation type.
+    For example, the CN Tower location would be created as such: cn_tower = Cartier::GPSLocation.new("43.64775237227008", "-79.38707828521729")
+    To determine the distance between two locations: Cartier::Navigation.haversine_distance(cn_tower, ago)
+    
 
 ## Contributing
 

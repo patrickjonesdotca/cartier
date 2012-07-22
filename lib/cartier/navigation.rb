@@ -66,12 +66,12 @@ module Cartier
     #   - Bearing in Degrees (not radians)
     #
     def self.get_bearing(location, destination)
-      location_long = location.longitude.to_f
-      location_latitude = location.latitude.to_f
+      location_long = location.longitude.to_f * Math::PI/180
+      location_latitude = location.latitude.to_f * Math::PI/180
       destination_long = destination.longitude.to_f
       destination_latitude = destination.latitude.to_f
       
-      delta_long = (destination_long - location_long)
+      delta_long = (destination_long - location_long) * Math::PI/180
       y = Math.sin(delta_long) * Math.cos(destination_latitude)
       x = Math.cos(location_latitude) * Math.sin(destination_latitude) - Math.sin(location_latitude) * Math.cos(destination_latitude) * Math.cos(delta_long)
       theta = (Math.atan2(y, x) / Math::PI) * 180

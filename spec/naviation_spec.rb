@@ -36,7 +36,7 @@ describe Cartier::Navigation do
   it ".get_bearing should calculate the bearing between cn_tower and ago properly" do
     @here = FactoryGirl.build(:cn_tower)
     @ago = FactoryGirl.build(:ago)
-    Cartier::Navigation.get_bearing(@here, @ago).should == 317.1371597378672
+    Cartier::Navigation.get_bearing(@here, @ago).should == 248.24661021678037
   end
   
 end

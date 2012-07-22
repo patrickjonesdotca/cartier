@@ -4,6 +4,7 @@ module Cartier
   class Navigation
     #radius in km
     EARTH_RADIUS = 6371
+    RADIANS = 57.29578
     
     #
     #
@@ -76,6 +77,60 @@ module Cartier
       x = Math.cos(location_latitude) * Math.sin(destination_latitude) - Math.sin(location_latitude) * Math.cos(destination_latitude) * Math.cos(delta_long)
       theta = (Math.atan2(y, x) / Math::PI) * 180
       (theta + 360) % 360
+    end
+    
+    
+    #
+    #
+    # * *Args*    :
+    #   - +location+ -> GPSLocation object representing current location
+    #   - +destination+ -> GPSLocation object representing destination
+    # * *Returns* :
+    #   - Cartier::GPSLocation object representing midpoint
+    #
+    def self.get_midpoint(location, destination)
+      latitude_1 = location.latitude.to_f * Math::PI/180
+      longitude_1 = location.longitude.to_f * Math::PI/180
+      latitude_2 = destination.latitude.to_f * Math::PI/180
+      delta_long = (destination.longitude.to_f - location.longitude.to_f) * Math::PI/180
+      
+      bx = Math.cos(latitude_2) * Math.cos(delta_long)
+      by = Math.cos(latitude_2) * Math.sin(delta_long)
+
+      latitude_3 = Math.atan2(Math.sin(latitude_1) + Math.sin(latitude_2), 
+        Math.sqrt( (Math.cos(latitude_1)+bx)*(Math.cos(latitude_1)+bx) + by*by))
+      longitude_3 = longitude_1 + Math.atan2(by, Math.cos(latitude_1) + bx)
+      longitude_3 = (longitude_3+3*Math::PI) % (2*Math::PI) - Math::PI
+      
+      latitude_3 = latitude_3 * RADIANS
+      longitude_3 = longitude_3 * RADIANS
+      Cartier::GPSLocation.new(latitude_3.to_s, longitude_3.to_s)
+    end
+    
+    #
+    #
+    # * *Args*    :
+    #   - +location+ -> Cartier::GPSLocation
+    #   - +bearing+ -> Bearing in Degrees
+    #   - +distance+ -> Distance in km
+    # * *Returns* :
+    #   - Cartier::GPSLocation object representing final point
+    #
+    def self.get_destination_point(location, bearing, distance)
+      distance_in_radians = distance / EARTH_RADIUS
+      bearing_in_radians = bearing * Math::PI/180
+      
+      latitude_1 = location.latitude.to_f * Math::PI/180
+      longitude_1 = location.longitude.to_f * Math::PI/180
+      
+      latitude_2 = Math.asin( Math.sin(latitude_1)*Math.cos(distance_in_radians) + 
+                        Math.cos(latitude_1)*Math.sin(distance_in_radians)*Math.cos(bearing_in_radians) )
+      longitude_2 = longitude_1 + Math.atan2(Math.sin(bearing_in_radians)*Math.sin(distance_in_radians)*Math.cos(latitude_1), 
+                               Math.cos(distance_in_radians)-Math.sin(latitude_1)*Math.sin(latitude_2))
+      longitude_2 = (longitude_2+3*Math::PI) % (2*Math::PI) - Math::PI
+      latitude_2 = latitude_2 * RADIANS
+      longitude_2 = longitude_2 * RADIANS
+      Cartier::GPSLocation.new(latitude_2.to_s, longitude_2.to_s)
     end
     
   end

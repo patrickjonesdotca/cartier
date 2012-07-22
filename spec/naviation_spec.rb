@@ -39,4 +39,22 @@ describe Cartier::Navigation do
     Cartier::Navigation.get_bearing(@here, @ago).should == 248.24661021678037
   end
   
+  it ".get_midpoint should find the proper location between two points" do
+    @here = FactoryGirl.build(:cn_tower)
+    @there = FactoryGirl.build(:washington_monument)
+    expected = Cartier::GPSLocation.new("41.277422062362376", "-78.16834424548739")
+    Cartier::Navigation.get_midpoint(@here, @there).latitude.should == expected.latitude
+    Cartier::Navigation.get_midpoint(@here, @there).longitude.should == expected.longitude
+  end
+  
+  it ".get_destination_point will find the proper location from current location, bearing and distance" do
+    @here = FactoryGirl.build(:cn_tower)
+    @bearing = 180
+    @distance = 200
+    expected = Cartier::GPSLocation.new("43.64775274320249", "-79.3870789598738")
+    Cartier::Navigation.get_destination_point(@here, @bearing, @distance).latitude.should == expected.latitude
+    Cartier::Navigation.get_destination_point(@here, @bearing, @distance).longitude.should == expected.longitude
+  end
+  
+  
 end

@@ -2,6 +2,7 @@ module Cartier
 
   # Encapsulating class for Navigation calculations
   class Navigation
+    #radius in km
     EARTH_RADIUS = 6371
     
     #
@@ -10,7 +11,7 @@ module Cartier
     #   - +location+ -> GPSLocation object representing current location
     #   - +longitude+ -> GPSLocation object representing current destination
     # * *Returns* :
-    #   - distance in miles
+    #   - distance in km
     
     def self.haversine_distance(location, destination)
       delta_lat = (destination.latitude.to_f - location.latitude.to_f) * Math::PI/180
@@ -22,6 +23,18 @@ module Cartier
       a = Math.sin(delta_lat/2)**2 + Math.sin(delta_long/2)**2 * Math.cos(latitude_1) * Math.cos(latitude_2)
       c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
       EARTH_RADIUS * c  
+    end
+    
+    def self.equirectangular_projection(location, destination)
+      latitude_1 = (location.latitude.to_f) * Math::PI/180
+      latitude_2 = (destination.latitude.to_f) * Math::PI/180
+      
+      longitude_1 = (location.longitude.to_f) * Math::PI/180
+      longitude_2 = (destination.longitude.to_f) * Math::PI/180
+      
+      x = (longitude_2 - longitude_1) * Math.cos((latitude_1+latitude_2)/2)
+      y = latitude_2 - latitude_1
+      Math.sqrt(x*x + y*y) * EARTH_RADIUS
     end
     
     #

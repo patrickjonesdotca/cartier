@@ -11,8 +11,7 @@ module Cartier
     #   - +location+ -> GPSLocation object representing current location
     #   - +longitude+ -> GPSLocation object representing current destination
     # * *Returns* :
-    #   - distance in km
-    
+    #   - distance in km   
     def self.haversine_distance(location, destination)
       delta_lat = (destination.latitude.to_f - location.latitude.to_f) * Math::PI/180
       delta_long = (destination.longitude.to_f - location.longitude.to_f) * Math::PI/180
@@ -25,6 +24,13 @@ module Cartier
       EARTH_RADIUS * c  
     end
     
+     #
+    #
+    # * *Args*    :
+    #   - +location+ -> GPSLocation object representing current location
+    #   - +longitude+ -> GPSLocation object representing current destination
+    # * *Returns* :
+    #   - distance in km 
     def self.equirectangular_projection(location, destination)
       latitude_1 = (location.latitude.to_f) * Math::PI/180
       latitude_2 = (destination.latitude.to_f) * Math::PI/180
@@ -68,7 +74,8 @@ module Cartier
       delta_long = (destination_long - location_long)
       y = Math.sin(delta_long) * Math.cos(destination_latitude)
       x = Math.cos(location_latitude) * Math.sin(destination_latitude) - Math.sin(location_latitude) * Math.cos(destination_latitude) * Math.cos(delta_long)
-      (Math.atan2(y, x) / Math::PI) * 180
+      theta = (Math.atan2(y, x) / Math::PI) * 180
+      (theta + 360) % 360
     end
     
   end
